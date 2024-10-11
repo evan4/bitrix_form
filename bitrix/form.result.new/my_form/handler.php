@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $company = '';
   $email = '';
   $phone = '';
-  
+  $form_id = (int) $postArgs['WEB_FORM_ID'];
+
   if(
     isset($postArgs['form_text_35'])
     && !empty($postArgs['form_text_35'])
@@ -53,18 +54,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $arSite = \Bitrix\Main\SiteTable::getById(SITE_ID)->fetch();
 
-    \Bitrix\Main\Mail\Event::sendImmediate(array(
-      "EVENT_NAME" => "USER_INFO",
-      "LID" => $arSite['LID'],
-      "C_FIELDS" => array( 
-          "NAME" => $name,
-          "COMPANY" => $company,
-          "EMAIL" => $email,
-          "PHONE" => $phone,
-          "MESSAGE" => $message,
-      ), 
+    CModule::IncludeModule("form");
 
+    $result_id = CFormResult::Add($_POST['WEB_FORM_ID'], array( 
+      "NAME" => $name,
+      "COMPANY" => $company,
+      "EMAIL" => $email,
+      "PHONE" => $phone,
+      "MESSAGE" => $message,
     ));
+    CFormCRM::onResultAdded($form_id, $result_id);
+    CFormResult::SetEvent($result_id);
+    CFormResult::Mail($result_id);
+
+    // \Bitrix\Main\Mail\Event::sendImmediate(array(
+    //   "EVENT_NAME" => "USER_INFO",
+    //   "LID" => $arSite['LID'],
+    //   "C_FIELDS" => array( 
+    //       "NAME" => $name,
+    //       "COMPANY" => $company,
+    //       "EMAIL" => $email,
+    //       "PHONE" => $phone,
+    //       "MESSAGE" => $message,
+    //   ), 
+    // ));
 
     LocalRedirect('/forma/uspeshno.php');
 
