@@ -50,18 +50,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     && $email
     && $phone
   ){
-    $message = filter_var($postArgs['form_text_39'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $message = filter_var($postArgs['form_textarea_39'], FILTER_SANITIZE_SPECIAL_CHARS);
 
     $arSite = \Bitrix\Main\SiteTable::getById(SITE_ID)->fetch();
 
     CModule::IncludeModule("form");
 
     $result_id = CFormResult::Add($_POST['WEB_FORM_ID'], array( 
-      "NAME" => $name,
-      "COMPANY" => $company,
-      "EMAIL" => $email,
-      "PHONE" => $phone,
-      "MESSAGE" => $message,
+      "form_text_35" => $name,
+      "form_text_36" => $company,
+      "form_email_37" => $email,
+      "form_text_38" => $phone,
+      "form_textarea_39" => $message,
     ));
     CFormCRM::onResultAdded($form_id, $result_id);
     CFormResult::SetEvent($result_id);
